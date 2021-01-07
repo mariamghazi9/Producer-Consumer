@@ -5,12 +5,22 @@ import java.util.Random;
 
 public class Product {
 
-    final Color color;
-    final int delayTime;
+    private final Color color;
+    private final int delayTime;
 
     public Product() {
+        final int low = 2000;
+        final int high = 10000;
         Random rand = new Random();
         color = new Color(rand.nextFloat(), rand.nextFloat(), rand.nextFloat());
-        delayTime = rand.nextInt(); //TODO set max and min
+        delayTime = rand.nextInt(high-low) + low;
+    }
+
+    public Color getColor() {
+        return color;
+    }
+
+    public int getDelayTime() {
+        return delayTime;
     }
 }
