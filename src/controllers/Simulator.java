@@ -8,15 +8,13 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
-
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.ResourceBundle;
 
 
@@ -24,7 +22,6 @@ public class Simulator implements Initializable {
 
     @FXML
     Canvas canvas;
-    List circles=new ArrayList<Point>();
     @FXML
     Button deleteButton;
     @FXML
@@ -95,8 +92,7 @@ public class Simulator implements Initializable {
     }
 
     private void addMachine(GraphicsContext gc, int x, int y) {
-        circles.add(new Point(x,y));
-        gc.setFill(Color.GREEN);
+        gc.setFill(Color.RED);
         int radius = 25;
         gc.fillOval(x-radius, y-radius, 2*radius, 2*radius);
         gc.setFont(Font.font ("Verdana", 10));
@@ -109,15 +105,27 @@ public class Simulator implements Initializable {
         double mouse_x = event.getX();
         double mouse_y = event.getY();
         double distance=0;
-        Iterator<Point> points= circles.listIterator();
-        while(points.hasNext()){
-            Point t = points.next();
+        Iterator<Point> pointsM= machines.listIterator();
+        Iterator<Point> pointsQ= queues.listIterator();
+        while(pointsM.hasNext()){
+            Point t = pointsM.next();
             distance=Math.sqrt(Math.pow((mouse_x - t.getX()), 2) + Math.pow((mouse_y - t.getY()), 2));
             if(distance <= 25)
                 selected=true;
         }
-        System.out.println(distance);
+        while(pointsQ.hasNext()){
+            Point t = pointsQ.next();
+            if((mouse_x>=t.getX()-25 && mouse_x<=t.getX()+25) || (mouse_y>=t.getY()-12.5 && mouse_y<=t.getY()-12.5))
+                selected=true;
+        }
         System.out.println(selected);
+    }
+
+    private void connect(GraphicsContext gc){
+        // Iterator<Point> pointsM= machines.listIterator();
+        //Iterator<Point> pointsQ= queues.listIterator();
+        gc.strokeLine(100-25,100,25+25,25);
+        gc.setFill(Color.BLACK);
     }
 
     public void updateCanvas() {
@@ -143,6 +151,7 @@ public class Simulator implements Initializable {
         machines.add(new Point(250, 250));
         machines.add(new Point(350, 350));
         updateCanvas();
+        connect(canvas.getGraphicsContext2D());
     }
 }
 
