@@ -44,12 +44,12 @@ public class Machine implements Producer, Runnable {
 
     public void removeConsumer(Consumer consumer) {
         this.consumer = null;
-        //TODO hasSource
+        ((MyQueue)consumer).setHasSource(false);
     }
 
     public void setConsumer(Consumer consumer) {
         this.consumer = consumer;
-        //TODO hasSource
+        ((MyQueue)consumer).setHasSource(true);
     }
 
     @Override

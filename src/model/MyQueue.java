@@ -1,5 +1,7 @@
 package model;
 
+import controllers.Simulator;
+
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,8 +12,14 @@ public class MyQueue implements Source, Consumer {
     protected boolean hasSource=false;
     private final List<Producer> readyMachines;
     private ArrayBlockingQueue<Product> ProductsQueue;
+    private Simulator controller;
+
     public MyQueue() {
         readyMachines = new ArrayList<>();
+    }
+
+    public void setController(Simulator controller) {
+        this.controller = controller;
     }
 
     @Override
@@ -23,6 +31,7 @@ public class MyQueue implements Source, Consumer {
 
     private synchronized void registerProduct() {
         Product product = ProductsQueue.remove();
+        controller.updateCanvas();
         if (!readyMachines.isEmpty()) {
             Producer activeMachine = readyMachines.remove(0);
             activeMachine.serve(product);
@@ -34,6 +43,7 @@ public class MyQueue implements Source, Consumer {
     public void consume(Product product) {
 
         ProductsQueue.add(product);
+        controller.updateCanvas();
         registerProduct();
     }
 
