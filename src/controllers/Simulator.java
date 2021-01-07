@@ -10,6 +10,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
+
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -22,6 +23,7 @@ public class Simulator implements Initializable {
 
     @FXML
     Canvas canvas;
+    List circles=new ArrayList<Point>();
     @FXML
     Button deleteButton;
     @FXML
@@ -35,6 +37,7 @@ public class Simulator implements Initializable {
     private boolean isQueue = true;
     private ArrayList<Point> queues = new ArrayList<Point>();
     private ArrayList<Point> machines = new ArrayList<Point>();
+    private ArrayList<Color> finishedProducts = new ArrayList<Color>();
 
 
     @FXML
@@ -99,6 +102,14 @@ public class Simulator implements Initializable {
         gc.setFill(Color.WHITESMOKE);
         gc.fillText("M1", x-8, y);
     }
+
+    private void drawProduct(GraphicsContext gc, int index, Color color) {
+        gc.setFill(color);
+        int radius = 20;
+        System.err.println(50+50*index);
+        gc.fillOval(50+50*index, canvas.getHeight()-50, 2*radius, 2*radius);
+    }
+
     @FXML
     private void select(MouseEvent event){
         boolean selected=false;
@@ -139,6 +150,13 @@ public class Simulator implements Initializable {
             Point temp = machineIterator.next();
             addMachine(canvas.getGraphicsContext2D(), temp.x, temp.y);
         }
+
+        int index = 0;
+        for (ListIterator<Color> iterator = finishedProducts.listIterator(finishedProducts.size()); iterator.hasPrevious();) {
+            Color temp = iterator.previous();
+            drawProduct(canvas.getGraphicsContext2D(), index, temp);
+            index++;
+        }
     }
 
     @Override
@@ -150,6 +168,10 @@ public class Simulator implements Initializable {
         machines.add(new Point(25, 25));
         machines.add(new Point(250, 250));
         machines.add(new Point(350, 350));
+        finishedProducts.add(Color.STEELBLUE);
+        finishedProducts.add(Color.ROYALBLUE);
+        finishedProducts.add(Color.BEIGE);
+        finishedProducts.add(Color.MEDIUMAQUAMARINE);
         updateCanvas();
         connect(canvas.getGraphicsContext2D());
     }

@@ -6,40 +6,32 @@ import java.util.Random;
 
 public class Machine implements Producer, Runnable {
 
-    private static class GraphicMachine {
-        private Color color = Color.cyan;
-        private Point coordinates;
 
-        public Color getColor() {
-            return color;
-        }
+    private Color color = Color.cyan;
+    private Point coordinates;
 
-        public Point getCoordinates() {
-            return coordinates;
-        }
-
-        public void setCoordinates(Point coordinates) {
-            this.coordinates = coordinates;
-        }
-    }
-
-    private final GraphicMachine graphicMachine = new GraphicMachine();
     private final int serviceTime;
     private final ArrayList<Source> sources = new ArrayList<>();
     private Consumer consumer;
-    private final int id;
     private Product currentProduct = null;
 
-    public Machine(int id) {
-        this.id = id;
+    public Machine() {
         final int low = 2000;
         final int high = 10000;
         Random rand = new Random();
         serviceTime = rand.nextInt(high - low) + low;
     }
 
-    public GraphicMachine getGraphicMachine(){
-        return this.graphicMachine;
+    public Color getColor() {
+        return color;
+    }
+
+    public Point getCoordinates() {
+        return coordinates;
+    }
+
+    public void setCoordinates(Point coordinates) {
+        this.coordinates = coordinates;
     }
 
     public void addSource(Source source) {
@@ -50,12 +42,14 @@ public class Machine implements Producer, Runnable {
         this.sources.remove(source);
     }
 
-    public void setConsumer(Consumer consumer) {
-        this.consumer = consumer;
+    public void removeConsumer(Consumer consumer) {
+        this.consumer = null;
+        //TODO hasSource
     }
 
-    public int getId() {
-        return id;
+    public void setConsumer(Consumer consumer) {
+        this.consumer = consumer;
+        //TODO hasSource
     }
 
     @Override
@@ -67,7 +61,7 @@ public class Machine implements Producer, Runnable {
             e.printStackTrace();
         } finally {
             consumer.consume(currentProduct);
-            this.graphicMachine.color = Color.cyan;
+            this.color = Color.cyan;
             this.currentProduct = null;
 
             for (Source source : sources) {
@@ -79,8 +73,8 @@ public class Machine implements Producer, Runnable {
     @Override
     public void serve(Product product) {
         this.currentProduct = product;
-        this.graphicMachine.color = this.currentProduct.getColor();
-        Thread thread = new Thread(this, "Machine #" + id);
+        this.color = this.currentProduct.getColor();
+        Thread thread = new Thread(this);
         thread.start();
     }
 }
