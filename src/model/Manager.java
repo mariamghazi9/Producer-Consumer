@@ -11,7 +11,7 @@ public class Manager {
     private Manager() {
     }
 
-    public Manager getInstance() {
+    public static Manager getInstance() {
         return instance;
     }
 
