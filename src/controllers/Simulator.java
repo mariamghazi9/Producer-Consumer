@@ -9,12 +9,11 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.net.URL;
-import java.util.ResourceBundle;
+import java.util.List;
 
 
 public class Simulator implements Initializable {
@@ -33,6 +32,10 @@ public class Simulator implements Initializable {
 
     private boolean deleteFlag = false;
     private boolean isQueue = true;
+    private ArrayList<Point> queues = new ArrayList<Point>();
+    private ArrayList<Point> machines = new ArrayList<Point>();
+    private ArrayList<Color> finishedProducts = new ArrayList<Color>();
+
 
     @FXML
     public void clicked(MouseEvent event) {
@@ -89,14 +92,21 @@ public class Simulator implements Initializable {
     }
 
     private void addMachine(GraphicsContext gc, int x, int y) {
-        circles.add(new Point(x,y));
-        gc.setFill(Color.GREEN);
+        gc.setFill(Color.RED);
         int radius = 25;
         gc.fillOval(x-radius, y-radius, 2*radius, 2*radius);
         gc.setFont(Font.font ("Verdana", 10));
         gc.setFill(Color.WHITESMOKE);
         gc.fillText("M1", x-8, y);
     }
+
+    private void drawProduct(GraphicsContext gc, int index, Color color) {
+        gc.setFill(color);
+        int radius = 20;
+        System.err.println(50+50*index);
+        gc.fillOval(50+50*index, canvas.getHeight()-50, 2*radius, 2*radius);
+    }
+
     @FXML
     private void select(MouseEvent event){
         boolean selected=false;
@@ -114,9 +124,40 @@ public class Simulator implements Initializable {
         System.out.println(selected);
     }
 
+    public void updateCanvas() {
+        Iterator<Point> queueIterator = queues.iterator();
+        while (queueIterator.hasNext()) {
+            Point temp = queueIterator.next();
+            addQueue(canvas.getGraphicsContext2D(), temp.x, temp.y);
+        }
+        Iterator<Point> machineIterator = machines.iterator();
+        while (machineIterator.hasNext()) {
+            Point temp = machineIterator.next();
+            addMachine(canvas.getGraphicsContext2D(), temp.x, temp.y);
+        }
+
+        int index = 0;
+        for (ListIterator<Color> iterator = finishedProducts.listIterator(finishedProducts.size()); iterator.hasPrevious();) {
+            Color temp = iterator.previous();
+            drawProduct(canvas.getGraphicsContext2D(), index, temp);
+            index++;
+        }
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         addQueue.getStyleClass().add("selected");
+        queues.add(new Point(100, 100));
+        queues.add(new Point(200, 200));
+        queues.add(new Point(300, 300));
+        machines.add(new Point(25, 25));
+        machines.add(new Point(250, 250));
+        machines.add(new Point(350, 350));
+        finishedProducts.add(Color.STEELBLUE);
+        finishedProducts.add(Color.ROYALBLUE);
+        finishedProducts.add(Color.BEIGE);
+        finishedProducts.add(Color.MEDIUMAQUAMARINE);
+        updateCanvas();
     }
 }
 
