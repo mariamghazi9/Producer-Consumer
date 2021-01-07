@@ -6,17 +6,10 @@ import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 
 public class MyQueue implements Source, Consumer {
-    private GraphicalQueue graphicalQueue;
     private List<Producer> readyMachines;
     private ArrayBlockingQueue<Product> ProductsQueue;
     public MyQueue() {
-        graphicalQueue = new GraphicalQueue();
         readyMachines = new ArrayList<>();
-        ProductsQueue = new ArrayBlockingQueue<Product>(Manager.getInstance().getProductsNumber());
-    }
-
-    public GraphicalQueue getGraphicalQueue() {
-        return graphicalQueue;
     }
 
     @Override
@@ -42,7 +35,11 @@ public class MyQueue implements Source, Consumer {
         registerProduct();
     }
 
-    private class GraphicalQueue {
+    public void createBlockingQueue(int maxSize)
+    {
+        ProductsQueue=new ArrayBlockingQueue<>(maxSize);
+    }
+
         private Point coordinates;
 
         public Point getCoordinates() {
@@ -54,4 +51,4 @@ public class MyQueue implements Source, Consumer {
         }
 
     }
-}
+
