@@ -5,14 +5,14 @@ import java.util.ArrayList;
 public class Manager {
 
     ArrayList<Product> products = new ArrayList<>();
-    final private Manager instance = new Manager();
+    final private static Manager instance = new Manager();
     private int productsNumber;
 
     private Manager() {
     }
 
-    public Manager getInstance() {
-        return this.instance;
+    public static Manager getInstance() {
+        return instance;
     }
 
     public int getProductsNumber() {
