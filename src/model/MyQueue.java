@@ -1,13 +1,35 @@
 package model;
 
+import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
 
 public class MyQueue implements Source,Consumer {
+    private class GraphicalQueue{
+        public Point getCoordinates() {
+            return coordinates;
+        }
 
-    private List<Producer> readyMachines;
-    private ArrayBlockingQueue<Product> ProductsQueue;
+        public void setCoordinates(Point coordinates) {
+            this.coordinates = coordinates;
+        }
+
+        private Point coordinates;
+
+    }
+
+    public GraphicalQueue getGraphicalQueue() {
+        return graphicalQueue;
+    }
+
+
+
+    private GraphicalQueue graphicalQueue=new GraphicalQueue();
+    private List<Producer> readyMachines=new ArrayList<>();
+    private ArrayBlockingQueue<Product> ProductsQueue=new ArrayBlockingQueue<Product>(1000);
+
 
 
     @Override
