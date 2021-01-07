@@ -6,8 +6,9 @@ import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 
 public class MyQueue implements Source, Consumer {
-    private List<Producer> readyMachines;
+
     protected boolean hasSource=false;
+    private final List<Producer> readyMachines;
     private ArrayBlockingQueue<Product> ProductsQueue;
     public MyQueue() {
         readyMachines = new ArrayList<>();

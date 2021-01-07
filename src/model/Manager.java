@@ -8,8 +8,9 @@ public class Manager {
     private State currentState;
     private final ArrayList<State> savedStates = new ArrayList<>();
     final private static Manager instance = new Manager();
-    private int productsNumber;
+
     private MyQueue mainQueue;
+    private Integer productsNumber;
 
     private Manager() {
     }
@@ -50,10 +51,11 @@ public class Manager {
     }
 
     public void startSimulation() {
+        //TODO Check conditions met
         ArrayList<MyQueue> queues = currentState.getQueues();
         ArrayList<Product> products = currentState.getProducts();
         for (MyQueue queue: queues) {
-
+            //TODO add blocking queues
         }
 
         for (int i = 0; i < this.productsNumber; i++) {
@@ -66,10 +68,11 @@ public class Manager {
     private void saveState() {
         this.savedStates.add(currentState);
         currentState = null;
+        productsNumber = null;
     }
 
     public void play(int stateIndex) {
-
+        //TODO
     }
 
     private boolean setMainQueue()
