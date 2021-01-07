@@ -10,7 +10,10 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 
+import java.awt.*;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.ResourceBundle;
 
 
@@ -29,6 +32,9 @@ public class Simulator implements Initializable {
 
     private boolean deleteFlag = false;
     private boolean isQueue = true;
+    private ArrayList<Point> queues = new ArrayList<Point>();
+    private ArrayList<Point> machines = new ArrayList<Point>();
+
 
     @FXML
     public void clicked(MouseEvent event) {
@@ -93,9 +99,29 @@ public class Simulator implements Initializable {
         gc.fillText("M1", x-8, y);
     }
 
+    public void updateCanvas() {
+        Iterator<Point> queueIterator = queues.iterator();
+        while (queueIterator.hasNext()) {
+            Point temp = queueIterator.next();
+            addQueue(canvas.getGraphicsContext2D(), temp.x, temp.y);
+        }
+        Iterator<Point> machineIterator = machines.iterator();
+        while (machineIterator.hasNext()) {
+            Point temp = machineIterator.next();
+            addMachine(canvas.getGraphicsContext2D(), temp.x, temp.y);
+        }
+    }
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         addQueue.getStyleClass().add("selected");
+        queues.add(new Point(100, 100));
+        queues.add(new Point(200, 200));
+        queues.add(new Point(300, 300));
+        machines.add(new Point(25, 25));
+        machines.add(new Point(250, 250));
+        machines.add(new Point(350, 350));
+        updateCanvas();
     }
 }
 
