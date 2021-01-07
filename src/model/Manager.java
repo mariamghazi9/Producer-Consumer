@@ -1,6 +1,7 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Manager {
 
@@ -8,6 +9,7 @@ public class Manager {
     private final ArrayList<State> savedStates = new ArrayList<>();
     final private static Manager instance = new Manager();
     private int productsNumber;
+    private MyQueue mainQueue;
 
     private Manager() {
     }
@@ -68,5 +70,23 @@ public class Manager {
 
     public void play(int stateIndex) {
 
+    }
+
+    private boolean setMainQueue()
+    {
+        List<MyQueue> mainQueue=new ArrayList<>();
+        List<MyQueue> allQueues=this.currentState.getQueues();
+        for (MyQueue queue: allQueues)
+        {
+             if(!queue.hasSource())
+             {
+                mainQueue.add(queue);
+             }
+        }
+        if(mainQueue.size()==1) {
+            this.mainQueue = mainQueue.get(0);
+            return true;
+        }
+        return false;
     }
 }

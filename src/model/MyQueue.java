@@ -7,6 +7,7 @@ import java.util.concurrent.ArrayBlockingQueue;
 
 public class MyQueue implements Source, Consumer {
     private List<Producer> readyMachines;
+    protected boolean hasSource=false;
     private ArrayBlockingQueue<Product> ProductsQueue;
     public MyQueue() {
         readyMachines = new ArrayList<>();
@@ -49,6 +50,16 @@ public class MyQueue implements Source, Consumer {
         public void setCoordinates(Point coordinates) {
             this.coordinates = coordinates;
         }
+
+      protected boolean hasSource()
+      {
+          return this.hasSource;
+      }
+
+      protected void setHasSource(boolean hasSource)
+      {
+          this.hasSource=hasSource;
+      }
 
     }
 
