@@ -13,11 +13,9 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class Simulator {
 
 public class Simulator implements Initializable {
 
