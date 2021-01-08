@@ -4,9 +4,10 @@ import java.util.ArrayList;
 
 public class State {
 
-    private ArrayList<Product> products;
-    private ArrayList<Machine> machines;
-    private ArrayList<MyQueue> queues;
+    private final ArrayList<Product> products = new ArrayList<>();
+    private final ArrayList<Machine> machines = new ArrayList<>();
+    private final ArrayList<MyQueue> queues = new ArrayList<>();
+    private MyQueue firstQueue;
 
     public ArrayList<Product> getProducts() {
         return products;
@@ -18,5 +19,13 @@ public class State {
 
     public ArrayList<MyQueue> getQueues() {
         return queues;
+    }
+
+    public MyQueue getFirstQueue() {
+        return firstQueue;
+    }
+
+    public void setFirstQueue(MyQueue firstQueue) {
+        this.firstQueue = firstQueue;
     }
 }
