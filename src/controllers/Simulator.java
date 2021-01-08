@@ -8,15 +8,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.net.URL;
-import java.util.ResourceBundle;
+import java.util.List;
 
 
 public class Simulator implements Initializable {
@@ -111,7 +108,7 @@ public class Simulator implements Initializable {
     }
 
     @FXML
-    private void select(MouseEvent event){
+    private boolean select(MouseEvent event){
         boolean selected=false;
         double mouse_x = event.getX();
         double mouse_y = event.getY();
@@ -129,7 +126,7 @@ public class Simulator implements Initializable {
             if((mouse_x>=t.getX()-25 && mouse_x<=t.getX()+25) || (mouse_y>=t.getY()-12.5 && mouse_y<=t.getY()-12.5))
                 selected=true;
         }
-        System.out.println(selected);
+        return selected;
     }
 
     private void connect(GraphicsContext gc){
