@@ -11,6 +11,12 @@ public class MyQueue implements Source, Consumer, Graphical {
 
     protected boolean hasSource=false;
     private final List<Producer> readyMachines;
+
+    public List<Machine> getMachines() {
+        return machines;
+    }
+
+    private List<Machine> machines = new ArrayList<>();
     private ArrayBlockingQueue<Product> productsQueue;
     private Simulator controller;
     private Point coordinates;
@@ -75,5 +81,10 @@ public class MyQueue implements Source, Consumer, Graphical {
           this.hasSource=hasSource;
       }
 
+
+    public void addMachine(Machine machine){
+        this.readyMachines.add(machine);
+        this.machines.add(machine);
+    }
 }
 

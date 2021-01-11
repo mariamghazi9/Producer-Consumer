@@ -12,12 +12,20 @@ public class Machine implements Producer, Runnable, Graphical {
 
     private Color color = Color.rgb(183, 227, 255, 0.8);
     private Point coordinates;
-
     private final int serviceTime;
+
+    public ArrayList<Source> getSources() {
+        return sources;
+    }
+
     private final ArrayList<Source> sources = new ArrayList<>();
+
+    public Consumer getConsumer() {
+        return consumer;
+    }
+
     private Consumer consumer;
     private Product currentProduct = null;
-
     public Machine(Point coordinates) {
         this.coordinates = coordinates;
         final int low = 2000;

@@ -23,6 +23,8 @@ public class Simulator implements Initializable {
     @FXML
     Button deleteConnectionButton;
     @FXML
+    Button addConnectionButton;
+    @FXML
     Button deleteElementButton;
     @FXML
     Button addQueue;
@@ -33,9 +35,12 @@ public class Simulator implements Initializable {
 
     private boolean deleteElementFlag = false;
     private boolean deleteConnectionFlag = false;
+    private boolean addConnectionFlag = false;
     private boolean isQueue = true;
     private MyQueue source;
     private MyQueue endStack;
+    private MyQueue selectedQueue;
+    private Machine selectedMachine;
     private Graphical currentlySelected;
     private Point selectionReference;
     private ArrayList<Color> finishedProducts = new ArrayList<Color>();
@@ -74,6 +79,16 @@ public class Simulator implements Initializable {
         }
         deleteElementFlag = !deleteElementFlag;
     }
+    @FXML
+    public void addConnection() {
+        if (addConnectionFlag) {
+            addConnectionButton.getStyleClass().remove(1);
+        } else {
+            addConnectionButton.getStyleClass().add("disable");
+        }
+        addConnectionFlag = !addConnectionFlag;
+    }
+
 
     @FXML
     protected void handleAddQueue() {
@@ -124,7 +139,6 @@ public class Simulator implements Initializable {
 
     @FXML
     private void select(MouseEvent event){
-        boolean selected=false;
         double mouse_x = event.getX();
         double mouse_y = event.getY();
         State currentState = Manager.getInstance().getCurrentState();
@@ -138,6 +152,11 @@ public class Simulator implements Initializable {
                     || (mouse_y>=t.getCoordinates().y-12.5 && mouse_y<=t.getCoordinates().y-12.5)) {
                 currentlySelected = t;
                 selectionReference = new Point((int)event.getX(), (int)event.getY());
+                if (addConnectionFlag){
+                    selectedQueue = t;
+                    addConnection(t);
+                    updateCanvas();
+                }
             }
         }
         Iterator<Machine> machineIterator = currentState.getMachines().iterator();
@@ -147,6 +166,11 @@ public class Simulator implements Initializable {
             if(distance <= 25) {
                 currentlySelected = t;
                 selectionReference = new Point((int) event.getX(), (int) event.getY());
+                if (addConnectionFlag){
+                    selectedMachine = t;
+                    addConnection(t);
+                    updateCanvas();
+                }
             }
         }
         // TODO connection adding code may go here
@@ -160,14 +184,21 @@ public class Simulator implements Initializable {
             currentlySelected = null;
             updateCanvas();
         }
+
     }
 
-    private void connect(GraphicsContext gc){
-        // Iterator<Point> pointsM= machines.listIterator();
-        //Iterator<Point> pointsQ= queues.listIterator();
-        gc.strokeLine(100-25,100,25+25,25);
-        gc.setFill(Color.BLACK);
-        
+    private void addConnection(MyQueue queue){
+        if (selectedMachine != null){
+            selectedMachine.setConsumer(queue);
+        }
+        selectedMachine = null;
+    }
+
+    private void addConnection(Machine machine){
+        if (selectedQueue != null){
+            selectedQueue.addMachine(machine);
+        }
+        selectedQueue = null;
     }
 
     @FXML
@@ -198,6 +229,10 @@ public class Simulator implements Initializable {
         drawQueue(canvas.getGraphicsContext2D(), endStack.getCoordinates().x, endStack.getCoordinates().y, "Stack");
         for (Machine temp : currentState.getMachines()) {
             drawMachine(canvas.getGraphicsContext2D(), temp.getCoordinates().x, temp.getCoordinates().y, temp.getColor());
+            if (temp.getConsumer() != null){
+                canvas.getGraphicsContext2D().strokeLine(temp.getCoordinates().getX() -25, temp.getCoordinates().getY(), ((MyQueue)temp.getConsumer()).getCoordinates().getX() + 25, ((MyQueue)temp.getConsumer()).getCoordinates().getY());
+                canvas.getGraphicsContext2D().setFill(Color.BLACK);
+            }
         }
         int index = 0;
         for (ListIterator<Color> iterator = finishedProducts.listIterator(finishedProducts.size()); iterator.hasPrevious();) {
@@ -205,26 +240,23 @@ public class Simulator implements Initializable {
             drawProduct(canvas.getGraphicsContext2D(), index, temp);
             index++;
         }
+        Iterator<MyQueue> queueIterator = currentState.getQueues().iterator();
+        while (queueIterator.hasNext()) {
+            MyQueue queue = queueIterator.next();
+            for (int i = 0; i < queue.getMachines().size(); i++) {
+                System.err.println(queue.getMachines().size());
+                canvas.getGraphicsContext2D().strokeLine(queue.getCoordinates().getX() -25, queue.getCoordinates().getY(), queue.getMachines().get(i).getCoordinates().getX() + 25, queue.getMachines().get(i).getCoordinates().getY());
+                canvas.getGraphicsContext2D().setFill(Color.BLACK);
+            }
+        }
     }
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         addQueue.getStyleClass().add("selected");
         source = Manager.getInstance().addQueue(new Point((int)canvas.getWidth()-20,(int)canvas.getHeight()/2-20));
         endStack = Manager.getInstance().addQueue(new Point(20,(int)canvas.getHeight()/2 - 20));
-        /*queues.add(new Point(100, 100));
-        queues.add(new Point(200, 200));
-        queues.add(new Point(300, 300));
-        machines.add(new Point(25, 25));
-        machines.add(new Point(250, 250));
-        machines.add(new Point(350, 350));
-        finishedProducts.add(Color.STEELBLUE);
-        finishedProducts.add(Color.ROYALBLUE);
-        finishedProducts.add(Color.BEIGE);
-        finishedProducts.add(Color.MEDIUMAQUAMARINE);
-        updateCanvas();
-        connect(canvas.getGraphicsContext2D());
-        finishedProducts.add(Color.MEDIUMAQUAMARINE);*/
     }
 
     public Color getContrastColor(Color color) {
