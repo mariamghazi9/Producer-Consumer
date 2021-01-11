@@ -10,7 +10,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import model.*;
-
 import java.awt.*;
 import java.util.*;
 import java.net.URL;
@@ -154,7 +153,7 @@ public class Simulator implements Initializable {
                 selectionReference = new Point((int)event.getX(), (int)event.getY());
                 if (addConnectionFlag){
                     selectedQueue = t;
-                    addConnection(t);
+                    addConnection(selectedQueue);
                     updateCanvas();
                 }
             }
@@ -168,7 +167,7 @@ public class Simulator implements Initializable {
                 selectionReference = new Point((int) event.getX(), (int) event.getY());
                 if (addConnectionFlag){
                     selectedMachine = t;
-                    addConnection(t);
+                    addConnection(selectedMachine);
                     updateCanvas();
                 }
             }
@@ -190,15 +189,17 @@ public class Simulator implements Initializable {
     private void addConnection(MyQueue queue){
         if (selectedMachine != null){
             selectedMachine.setConsumer(queue);
+            selectedMachine = null;
+            selectedQueue = null;
         }
-        selectedMachine = null;
     }
 
     private void addConnection(Machine machine){
         if (selectedQueue != null){
             selectedQueue.addMachine(machine);
+            selectedMachine = null;
+            selectedQueue = null;
         }
-        selectedQueue = null;
     }
 
     @FXML
