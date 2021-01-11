@@ -1,6 +1,7 @@
 package model;
 
-import java.awt.*;
+import javafx.scene.paint.Color;
+
 import java.util.Random;
 
 public class Product {
@@ -12,7 +13,7 @@ public class Product {
         final int low = 2000;
         final int high = 10000;
         Random rand = new Random();
-        color = new Color(rand.nextFloat(), rand.nextFloat(), rand.nextFloat());
+        color = Color.rgb(rand.nextInt(), rand.nextInt(), rand.nextInt(), 0.8);
         delayTime = rand.nextInt(high-low) + low;
     }
 

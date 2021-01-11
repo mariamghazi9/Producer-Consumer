@@ -1,13 +1,16 @@
 package model;
 
+
+import javafx.scene.paint.Color;
+
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class Machine implements Producer, Runnable {
+public class Machine implements Producer, Runnable, Graphical {
 
 
-    private Color color = Color.cyan;
+    private Color color = Color.rgb(183, 227, 255, 0.8);
     private Point coordinates;
 
     private final int serviceTime;
@@ -15,7 +18,8 @@ public class Machine implements Producer, Runnable {
     private Consumer consumer;
     private Product currentProduct = null;
 
-    public Machine() {
+    public Machine(Point coordinates) {
+        this.coordinates = coordinates;
         final int low = 2000;
         final int high = 10000;
         Random rand = new Random();
@@ -61,7 +65,7 @@ public class Machine implements Producer, Runnable {
             e.printStackTrace();
         } finally {
             consumer.consume(currentProduct);
-            this.color = Color.cyan;
+            this.color = Color.CYAN;
             this.currentProduct = null;
 
             for (Source source : sources) {

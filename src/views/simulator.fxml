@@ -7,11 +7,12 @@
 
 <AnchorPane prefHeight="617.0" prefWidth="885.0" stylesheets="@../Resources/styles.css" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.Simulator">
    <children>
-      <Canvas fx:id="canvas" height="492.0" layoutX="49.0" layoutY="111.0" onMouseClicked="#clicked" onMousePressed="#select" width="787.0" />
-      <Button layoutX="787.0" layoutY="14.0" mnemonicParsing="false" prefHeight="47.0" prefWidth="84.0" stylesheets="@../Resources/styles.css" text="Play" />
-      <Button fx:id="deleteButton" layoutX="579.0" layoutY="14.0" mnemonicParsing="false" onMouseClicked="#deleteConnection" prefHeight="47.0" prefWidth="164.0" stylesheets="@../Resources/styles.css" text="Delete Connection" />
+      <Canvas fx:id="canvas" height="454.0" layoutX="49.0" layoutY="149.0" onMouseClicked="#clicked" onMouseDragged="#mouseDrag" onMousePressed="#select" onMouseReleased="#mouseRelease" width="787.0" />
+      <Button layoutX="58.0" layoutY="61.0" mnemonicParsing="false" prefHeight="47.0" prefWidth="84.0" stylesheets="@../Resources/styles.css" text="Play" />
+      <Button fx:id="deleteConnectionButton" layoutX="538.0" layoutY="14.0" mnemonicParsing="false" onMouseClicked="#deleteConnection" prefHeight="47.0" prefWidth="164.0" stylesheets="@../Resources/styles.css" text="Delete Connection" />
       <Button fx:id="addMachine" layoutX="232.0" layoutY="14.0" mnemonicParsing="false" onMouseClicked="#handleAddMachine" prefHeight="47.0" prefWidth="132.0" stylesheets="@../Resources/styles.css" text="Add Machine" />
       <Button fx:id="addQueue" layoutX="374.0" layoutY="13.0" mnemonicParsing="false" onMouseClicked="#handleAddQueue" prefHeight="47.0" prefWidth="132.0" stylesheets="@../Resources/styles.css" text="Add Queue" />
       <TextField fx:id="productsNumText" layoutX="14.0" layoutY="21.0" prefHeight="31.0" prefWidth="171.0" promptText="Enter products number" />
+      <Button fx:id="deleteElementButton" layoutX="747.0" layoutY="14.0" mnemonicParsing="false" onMouseClicked="#deleteElement" prefHeight="47.0" prefWidth="132.0" stylesheets="@../Resources/styles.css" text="Delete Element" />
    </children>
 </AnchorPane>

@@ -2,6 +2,7 @@ package model;
 
 import controllers.Simulator;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,9 +33,9 @@ public class Manager {
         this.productsNumber = productsNumber;
     }
 
-    public MyQueue addQueue() {
+    public MyQueue addQueue(Point coordinates) {
         if (currentState == null) currentState = new State();
-        MyQueue myQueue = new MyQueue();
+        MyQueue myQueue = new MyQueue(coordinates);
         currentState.getQueues().add(myQueue);
         return myQueue;
 
@@ -44,9 +45,9 @@ public class Manager {
         currentState.getQueues().remove(myQueue);
     }
 
-    public Machine addMachine() {
+    public Machine addMachine(Point coordinates) {
         if (currentState == null) currentState = new State();
-        Machine machine = new Machine();
+        Machine machine = new Machine(coordinates);
         currentState.getMachines().add(machine);
         return machine;
     }
@@ -82,7 +83,6 @@ public class Manager {
 
     public void play(int stateIndex) {
         State myState = savedStates.get(stateIndex);
-
     }
 
     private boolean setMainQueue()
@@ -101,5 +101,9 @@ public class Manager {
             return true;
         }
         return false;
+    }
+
+    public State getCurrentState() {
+        return currentState;
     }
 }
