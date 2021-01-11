@@ -151,11 +151,10 @@ public class Simulator implements Initializable {
                     || (mouse_y>=t.getCoordinates().y-12.5 && mouse_y<=t.getCoordinates().y-12.5)) {
                 currentlySelected = t;
                 selectionReference = new Point((int)event.getX(), (int)event.getY());
-                if (addConnectionFlag){
-                    selectedQueue = t;
-                    addConnection(selectedQueue);
-                    updateCanvas();
-                }
+                selectedQueue = t;
+                connection(selectedQueue);
+                updateCanvas();
+
             }
         }
         Iterator<Machine> machineIterator = currentState.getMachines().iterator();
@@ -165,14 +164,12 @@ public class Simulator implements Initializable {
             if(distance <= 25) {
                 currentlySelected = t;
                 selectionReference = new Point((int) event.getX(), (int) event.getY());
-                if (addConnectionFlag){
-                    selectedMachine = t;
-                    addConnection(selectedMachine);
-                    updateCanvas();
-                }
+                selectedMachine = t;
+                connection(selectedMachine);
+                updateCanvas();
+
             }
         }
-        // TODO connection adding code may go here
         // To prevent movement and deletion
         if (currentlySelected==source || currentlySelected==endStack) {
             currentlySelected = null;
@@ -186,19 +183,37 @@ public class Simulator implements Initializable {
 
     }
 
-    private void addConnection(MyQueue queue){
-        if (selectedMachine != null){
-            selectedMachine.setConsumer(queue);
-            selectedMachine = null;
-            selectedQueue = null;
+    private void connection(MyQueue queue){
+        if (addConnectionFlag) {
+            if (selectedMachine != null) {
+                selectedMachine.setConsumer(queue);
+                selectedMachine = null;
+                selectedQueue = null;
+            }
+        }
+        else if (deleteConnectionFlag){
+            if (selectedMachine != null) {
+                selectedMachine.removeConsumer(queue);
+                selectedMachine = null;
+                selectedQueue = null;
+            }
         }
     }
 
-    private void addConnection(Machine machine){
-        if (selectedQueue != null){
-            selectedQueue.addMachine(machine);
-            selectedMachine = null;
-            selectedQueue = null;
+    private void connection(Machine machine){
+        if (addConnectionFlag) {
+            if (selectedQueue != null) {
+                selectedQueue.addMachine(machine);
+                selectedMachine = null;
+                selectedQueue = null;
+            }
+        }
+        else if (deleteConnectionFlag){
+            if (selectedQueue != null) {
+                selectedQueue.getMachines().remove(machine);
+                selectedMachine = null;
+                selectedQueue = null;
+            }
         }
     }
 
