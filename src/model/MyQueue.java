@@ -26,14 +26,22 @@ public class MyQueue implements Source, Consumer, Graphical {
         readyMachines = new ArrayList<>();
     }
 
+    public ArrayBlockingQueue<Product> getProductsQueue() {
+        return productsQueue;
+    }
+
     public void setController(Simulator controller) {
         this.controller = controller;
     }
 
     @Override
-    public void update(Producer machine) {
+    public boolean update(Producer machine) {
         this.readyMachines.add(machine);
-        registerProduct();
+        if (productsCount() > 0) {
+            registerProduct();
+            return true;
+        }
+        return false;
     }
 
     public int productsCount() {
@@ -42,20 +50,18 @@ public class MyQueue implements Source, Consumer, Graphical {
     }
 
     private synchronized void registerProduct() {
-        Product product = productsQueue.remove();
-        controller.updateCanvas();
         if (!readyMachines.isEmpty()) {
+            Product product = productsQueue.poll();
             Producer activeMachine = readyMachines.remove(0);
             activeMachine.serve(product);
         }
-
+        controller.updateCanvas();
     }
-
     @Override
     public void consume(Product product) {
         productsQueue.add(product);
-        controller.updateCanvas();
         registerProduct();
+        controller.updateCanvas();
     }
 
     public void createBlockingQueue(int maxSize)
@@ -81,6 +87,9 @@ public class MyQueue implements Source, Consumer, Graphical {
           this.hasSource=hasSource;
       }
 
+    public synchronized List<Producer> getReadyMachines() {
+        return readyMachines;
+    }
 
     public void addMachine(Machine machine){
         this.readyMachines.add(machine);

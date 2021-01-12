@@ -13,7 +13,7 @@ public class Product {
         final int low = 2000;
         final int high = 10000;
         Random rand = new Random();
-        color = Color.rgb(rand.nextInt(), rand.nextInt(), rand.nextInt(), 0.8);
+        color = Color.rgb(rand.nextInt(255), rand.nextInt(255), rand.nextInt(255), 0.8);
         delayTime = rand.nextInt(high-low) + low;
     }
 

@@ -4,15 +4,16 @@ import controllers.Simulator;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.List;
 
 public class Manager {
 
     private State currentState;
     private final ArrayList<State> savedStates = new ArrayList<>();
     final private static Manager instance = new Manager();
+    private static int machineIDGenerator = 0;
     private Integer productsNumber;
     private Simulator controller;
+
 
     private Manager() {
     }
@@ -33,6 +34,10 @@ public class Manager {
         this.productsNumber = productsNumber;
     }
 
+    public static int getMachineIDGenerator() {
+        return machineIDGenerator;
+    }
+
     public MyQueue addQueue(Point coordinates) {
         if (currentState == null) currentState = new State();
         MyQueue myQueue = new MyQueue(coordinates);
@@ -48,6 +53,7 @@ public class Manager {
     public Machine addMachine(Point coordinates) {
         if (currentState == null) currentState = new State();
         Machine machine = new Machine(coordinates);
+        machineIDGenerator++;
         currentState.getMachines().add(machine);
         return machine;
     }
@@ -57,53 +63,38 @@ public class Manager {
     }
 
     public void startSimulation() {
-        if (!setMainQueue() || (productsNumber == null)) {
+        if (productsNumber == null) {
             throw new RuntimeException();
         }
+        this.currentState.setFirstQueue(currentState.getQueues().get(0));
         ArrayList<MyQueue> queues = currentState.getQueues();
-        ArrayList<Product> products = currentState.getProducts();
         for (MyQueue queue: queues) {
             queue.createBlockingQueue(this.productsNumber);
             queue.setController(controller);
         }
 
         for (int i = 0; i < this.productsNumber; i++) {
-            products.add(new Product());
+            currentState.getFirstQueue().consume(new Product());
         }
 
-        this.saveState();
+        this.savedStates.add(currentState);
         this.play(savedStates.size() - 1);
     }
 
-    private void saveState() {
-        this.savedStates.add(currentState);
+    public void newState() {
         currentState = null;
         productsNumber = null;
     }
 
     public void play(int stateIndex) {
-        State myState = savedStates.get(stateIndex);
-    }
-
-    private boolean setMainQueue()
-    {
-        List<MyQueue> mainQueue=new ArrayList<>();
-        List<MyQueue> allQueues=this.currentState.getQueues();
-        for (MyQueue queue: allQueues)
-        {
-             if(!queue.hasSource())
-             {
-                mainQueue.add(queue);
-             }
-        }
-        if(mainQueue.size()==1) {
-            this.currentState.setFirstQueue(mainQueue.get(0));
-            return true;
-        }
-        return false;
+        currentState = savedStates.get(stateIndex);
     }
 
     public State getCurrentState() {
         return currentState;
+    }
+
+    public ArrayList<State> getSavedStates() {
+        return savedStates;
     }
 }

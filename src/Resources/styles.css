@@ -3,22 +3,19 @@
     -fx-font-size: 12px;
     -fx-cursor: pointer;
     -fx-text-align: center;
-    -fx-background-color: #4CAF50;
+    -fx-background-color: #0095C7;
     -fx-border-radius: 15px;
     -fx-text-fill: white;
 }
 
-.button:hover { -fx-background-color: #3e8e41}
+.button:hover { -fx-background-color: #003271}
 
 .button:active {
-    -fx-background-color: #3e8e41;
+    -fx-background-color: #91D6FF;
 }
 
 .selected {
-    -fx-background-color: #55DD8F;
-}
-.disable {
-    -fx-background-color: #55668F;
+    -fx-background-color: #91D6FF;
 }
 
 

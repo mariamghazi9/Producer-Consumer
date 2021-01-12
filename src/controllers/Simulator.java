@@ -5,6 +5,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
@@ -20,6 +21,8 @@ public class Simulator implements Initializable {
     @FXML
     Canvas canvas;
     @FXML
+    Button playButton;
+    @FXML
     Button deleteConnectionButton;
     @FXML
     Button addConnectionButton;
@@ -31,6 +34,13 @@ public class Simulator implements Initializable {
     Button addMachine;
     @FXML
     TextField productsNumText;
+    @FXML
+    Button newSimulationButton;
+    @FXML
+    Button reSimulationButton;
+    @FXML
+    ChoiceBox<Integer> stateChoiceBox;
+
 
     private boolean deleteElementFlag = false;
     private boolean deleteConnectionFlag = false;
@@ -42,14 +52,12 @@ public class Simulator implements Initializable {
     private Machine selectedMachine;
     private Graphical currentlySelected;
     private Point selectionReference;
-    private ArrayList<Color> finishedProducts = new ArrayList<Color>();
 
 
 
     @FXML
     public void clicked(MouseEvent event) {
         if(event.getClickCount() == 2){
-            System.out.println("Double clicked");
             if (isQueue) {
                 Manager.getInstance().addQueue(new Point((int) event.getX(), (int) event.getY()));
             } else {
@@ -64,7 +72,11 @@ public class Simulator implements Initializable {
         if (deleteConnectionFlag) {
             deleteConnectionButton.getStyleClass().remove(1);
         } else {
-            deleteConnectionButton.getStyleClass().add("disable");
+            deleteConnectionButton.getStyleClass().add("selected");
+            if (addConnectionFlag) {
+                addConnectionButton.getStyleClass().remove(1);
+                addConnectionFlag = false;
+            }
         }
         deleteConnectionFlag = !deleteConnectionFlag;
     }
@@ -74,7 +86,7 @@ public class Simulator implements Initializable {
         if (deleteElementFlag) {
             deleteElementButton.getStyleClass().remove(1);
         } else {
-            deleteElementButton.getStyleClass().add("disable");
+            deleteElementButton.getStyleClass().add("selected");
         }
         deleteElementFlag = !deleteElementFlag;
     }
@@ -83,7 +95,11 @@ public class Simulator implements Initializable {
         if (addConnectionFlag) {
             addConnectionButton.getStyleClass().remove(1);
         } else {
-            addConnectionButton.getStyleClass().add("disable");
+            addConnectionButton.getStyleClass().add("selected");
+            if (deleteConnectionFlag) {
+                deleteConnectionButton.getStyleClass().remove(1);
+                deleteConnectionFlag = false;
+            }
         }
         addConnectionFlag = !addConnectionFlag;
     }
@@ -113,7 +129,7 @@ public class Simulator implements Initializable {
     }
 
     private void drawQueue(GraphicsContext gc, int x, int y, String text) {
-        gc.setFill(Color.GREEN);
+        gc.setFill(Color.rgb(0,128,0, 0.8));
         gc.fillRect(x-25, y-12.5, 50, 25);
         gc.setFont(Font.font ("Verdana", 10));
         gc.setFill(Color.WHITESMOKE);
@@ -126,13 +142,15 @@ public class Simulator implements Initializable {
         gc.fillOval(x-radius, y-radius, 2*radius, 2*radius);
         gc.setFont(Font.font ("Verdana", 10));
         gc.setFill(getContrastColor(color));
+        if (!color.equals(Color.rgb(183, 227, 255, 0.8))) {
+            gc.fillText("...", x-5, y+10);
+        }
         gc.fillText("M", x-5, y);
     }
 
     private void drawProduct(GraphicsContext gc, int index, Color color) {
         gc.setFill(color);
         int radius = 20;
-        System.err.println(50+50*index);
         gc.fillOval(50+50*index, canvas.getHeight()-50, 2*radius, 2*radius);
     }
 
@@ -142,46 +160,55 @@ public class Simulator implements Initializable {
         double mouse_y = event.getY();
         State currentState = Manager.getInstance().getCurrentState();
         if(currentState==null) return;
-        double distance=0;
-        Iterator<MyQueue> queueIterator = currentState.getQueues().iterator();
-        while(queueIterator.hasNext()){
-            MyQueue t = queueIterator.next();
-            // TODO queue selection to be modified here
-            if((mouse_x>=t.getCoordinates().x-25 && mouse_x<=t.getCoordinates().x+25)
-                    || (mouse_y>=t.getCoordinates().y-12.5 && mouse_y<=t.getCoordinates().y-12.5)) {
+        double distance;
+        int in = 0;
+        for (MyQueue t : currentState.getQueues()) {
+            in++;
+            if ((mouse_x >= t.getCoordinates().x - 25 && mouse_x <= t.getCoordinates().x + 25)
+                    && (mouse_y >= t.getCoordinates().y - 12.5 && mouse_y <= t.getCoordinates().y + 12.5)) {
                 currentlySelected = t;
-                selectionReference = new Point((int)event.getX(), (int)event.getY());
+                selectionReference = new Point((int) event.getSceneX(), (int) event.getSceneY());
                 selectedQueue = t;
                 connection(selectedQueue);
                 updateCanvas();
-
+                break;
             }
         }
-        Iterator<Machine> machineIterator = currentState.getMachines().iterator();
-        while(machineIterator.hasNext()){
-            Machine t = machineIterator.next();
-            distance=Math.sqrt(Math.pow((mouse_x - t.getCoordinates().getX()), 2) + Math.pow((mouse_y - t.getCoordinates().getY()), 2));
-            if(distance <= 25) {
+        for (Machine t : currentState.getMachines()) {
+            distance = Math.sqrt(Math.pow((mouse_x - t.getCoordinates().getX()), 2) + Math.pow((mouse_y - t.getCoordinates().getY()), 2));
+            if (distance <= 25) {
                 currentlySelected = t;
-                selectionReference = new Point((int) event.getX(), (int) event.getY());
+                selectionReference = new Point((int) event.getSceneX(), (int) event.getSceneY());
                 selectedMachine = t;
                 connection(selectedMachine);
                 updateCanvas();
-
             }
+        }
+        if (deleteElementFlag && currentlySelected!= null) {
+            deleteSelectedObject(currentlySelected, currentState);
+            currentlySelected = null;
+            updateCanvas();
         }
         // To prevent movement and deletion
         if (currentlySelected==source || currentlySelected==endStack) {
             currentlySelected = null;
         }
-        if (deleteElementFlag && currentlySelected!= null) {
-            currentState.getMachines().remove(currentlySelected);
-            currentState.getQueues().remove(currentlySelected);
-            currentlySelected = null;
-            updateCanvas();
-        }
-
     }
+
+    private void deleteSelectedObject(Graphical selectedObject, State currentState){
+        try {
+            Machine machine = (Machine) selectedObject;
+            for (Source source: machine.getSources()) {
+                source.getReadyMachines().remove(machine);
+                source.getMachines().remove(machine);
+            }
+            currentState.getMachines().remove(machine);
+        } catch (Exception e) {
+            MyQueue queue = (MyQueue) selectedObject;
+            currentState.getQueues().remove(queue);
+        }
+    }
+
 
     private void connection(MyQueue queue){
         if (addConnectionFlag) {
@@ -204,6 +231,7 @@ public class Simulator implements Initializable {
         if (addConnectionFlag) {
             if (selectedQueue != null) {
                 selectedQueue.addMachine(machine);
+                machine.addSource(selectedQueue);
                 selectedMachine = null;
                 selectedQueue = null;
             }
@@ -221,16 +249,16 @@ public class Simulator implements Initializable {
     private void mouseDrag(MouseEvent event){
         if (currentlySelected != null) {
             Point centerLocation = currentlySelected.getCoordinates();
-            currentlySelected.getCoordinates().x = centerLocation.x + (int)(event.getX()-selectionReference.x);
-            currentlySelected.getCoordinates().y = centerLocation.y + (int)(event.getY()-selectionReference.y);
-            selectionReference.x = (int)event.getX();
-            selectionReference.y = (int)event.getY();
+            currentlySelected.getCoordinates().x = centerLocation.x + (int)(event.getSceneX()-selectionReference.x);
+            currentlySelected.getCoordinates().y = centerLocation.y + (int)(event.getSceneY()-selectionReference.y);
+            selectionReference.x = (int)event.getSceneX();
+            selectionReference.y = (int)event.getSceneY();
             updateCanvas();
         }
     }
 
     @FXML
-    private void mouseRelease(MouseEvent event){
+    private void mouseRelease(){
         currentlySelected = null;
     }
 
@@ -238,9 +266,13 @@ public class Simulator implements Initializable {
         State currentState = Manager.getInstance().getCurrentState();
         canvas.getGraphicsContext2D().clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
         canvas.getGraphicsContext2D().setStroke(Color.BLACK);
-        canvas.getGraphicsContext2D().strokeRect(0,0, canvas.getWidth(), canvas.getHeight()-50);
-        for (MyQueue temp : currentState.getQueues()) {
-            drawQueue(canvas.getGraphicsContext2D(), temp.getCoordinates().x, temp.getCoordinates().y, temp.productsCount() + "");
+        canvas.getGraphicsContext2D().strokeRect(0,0, canvas.getWidth(), canvas.getHeight()-53);
+        for (MyQueue queue : currentState.getQueues()) {
+            drawQueue(canvas.getGraphicsContext2D(), queue.getCoordinates().x, queue.getCoordinates().y, queue.productsCount() + "");
+            for (int i = 0; i < queue.getMachines().size(); i++) {
+                canvas.getGraphicsContext2D().strokeLine(queue.getCoordinates().getX() - 25, queue.getCoordinates().getY(), queue.getMachines().get(i).getCoordinates().getX() + 25, queue.getMachines().get(i).getCoordinates().getY());
+                canvas.getGraphicsContext2D().setFill(Color.BLACK);
+            }
         }
         drawQueue(canvas.getGraphicsContext2D(), endStack.getCoordinates().x, endStack.getCoordinates().y, "Stack");
         for (Machine temp : currentState.getMachines()) {
@@ -250,29 +282,76 @@ public class Simulator implements Initializable {
                 canvas.getGraphicsContext2D().setFill(Color.BLACK);
             }
         }
-        int index = 0;
-        for (ListIterator<Color> iterator = finishedProducts.listIterator(finishedProducts.size()); iterator.hasPrevious();) {
-            Color temp = iterator.previous();
-            drawProduct(canvas.getGraphicsContext2D(), index, temp);
-            index++;
-        }
-        Iterator<MyQueue> queueIterator = currentState.getQueues().iterator();
-        while (queueIterator.hasNext()) {
-            MyQueue queue = queueIterator.next();
-            for (int i = 0; i < queue.getMachines().size(); i++) {
-                System.err.println(queue.getMachines().size());
-                canvas.getGraphicsContext2D().strokeLine(queue.getCoordinates().getX() -25, queue.getCoordinates().getY(), queue.getMachines().get(i).getCoordinates().getX() + 25, queue.getMachines().get(i).getCoordinates().getY());
-                canvas.getGraphicsContext2D().setFill(Color.BLACK);
+        if (endStack.getProductsQueue() != null) {
+            int index = 0;
+            for (Product product : endStack.getProductsQueue()) {
+                Color temp = product.getColor();
+                drawProduct(canvas.getGraphicsContext2D(), index, temp);
+                index++;
             }
+            if (index == Manager.getInstance().getProductsNumber()) { simulationFinished();}
         }
     }
 
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        Manager.getInstance().setController(this);
         addQueue.getStyleClass().add("selected");
         source = Manager.getInstance().addQueue(new Point((int)canvas.getWidth()-20,(int)canvas.getHeight()/2-20));
         endStack = Manager.getInstance().addQueue(new Point(20,(int)canvas.getHeight()/2 - 20));
+        newSimulationButton.setVisible(false);
+        reSimulationButton.setVisible(false);
+        stateChoiceBox.setVisible(false);
+        updateCanvas();
+    }
+
+    @FXML
+    public void play() {
+        try {
+            int productsNumber = Integer.parseInt(productsNumText.getText());
+            Manager.getInstance().setProductsNumber(productsNumber);
+        } catch (Exception e) {
+            System.err.println("Moshkla fen el products number ?!!");
+            return;
+        }
+        canvas.setDisable(true);
+        playButton.setVisible(false);
+        productsNumText.setVisible(false);
+        productsNumText.setText("");
+        Manager.getInstance().startSimulation();
+        updateCanvas();
+    }
+
+
+    public void simulationFinished() {
+        stateChoiceBox.getItems().clear();
+        for (int i = 0; i < Manager.getInstance().getSavedStates().size(); i++) {
+            stateChoiceBox.getItems().add(i+1);
+        }
+        stateChoiceBox.setVisible(true);
+        reSimulationButton.setVisible(true);
+        newSimulationButton.setVisible(true);
+    }
+
+    public void newSimulation() {
+        stateChoiceBox.setVisible(false);
+        reSimulationButton.setVisible(false);
+        newSimulationButton.setVisible(false);
+        canvas.setDisable(false);
+        playButton.setVisible(true);
+        productsNumText.setVisible(true);
+        Manager.getInstance().newState();
+    }
+
+    public void replaySimulation() {
+        if (!stateChoiceBox.getSelectionModel().isEmpty()) {
+            stateChoiceBox.setVisible(false);
+            reSimulationButton.setVisible(false);
+            newSimulationButton.setVisible(false);
+            Manager.getInstance().play(stateChoiceBox.getSelectionModel().getSelectedItem()-1);
+            Manager.getInstance().startSimulation();
+        }
     }
 
     public Color getContrastColor(Color color) {

@@ -13,6 +13,7 @@ public class Machine implements Producer, Runnable, Graphical {
     private Color color = Color.rgb(183, 227, 255, 0.8);
     private Point coordinates;
     private final int serviceTime;
+    private int machineID;
 
     public ArrayList<Source> getSources() {
         return sources;
@@ -27,6 +28,7 @@ public class Machine implements Producer, Runnable, Graphical {
     private Consumer consumer;
     private Product currentProduct = null;
     public Machine(Point coordinates) {
+        this.machineID = Manager.getMachineIDGenerator();
         this.coordinates = coordinates;
         final int low = 2000;
         final int high = 10000;
@@ -69,23 +71,26 @@ public class Machine implements Producer, Runnable, Graphical {
         try {
             Thread.sleep(serviceTime);
         } catch (InterruptedException e) {
-            System.err.println("Interrupted");
             e.printStackTrace();
         } finally {
+            this.color = Color.rgb(183, 227, 255, 0.8);
             consumer.consume(currentProduct);
-            this.color = Color.CYAN;
             this.currentProduct = null;
-
             for (Source source : sources) {
-                source.update(this);
+                if (source.update(this)) {
+                    break;
+                }
             }
         }
     }
 
     @Override
-    public void serve(Product product) {
+    public synchronized void serve(Product product) {
         this.currentProduct = product;
         this.color = this.currentProduct.getColor();
+        for (Source source: sources) {
+            source.getReadyMachines().remove(this);
+        }
         Thread thread = new Thread(this);
         thread.start();
     }
