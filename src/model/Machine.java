@@ -25,6 +25,11 @@ public class Machine implements Producer, Runnable, Graphical {
         return consumer;
     }
 
+    public MyQueue getDestination(){
+        return (MyQueue) consumer;
+    }
+
+
     private Consumer consumer;
     private Product currentProduct = null;
     public Machine(Point coordinates) {

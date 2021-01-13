@@ -4,6 +4,7 @@ import controllers.Simulator;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.concurrent.ArrayBlockingQueue;
 
 public class Manager implements Runnable{
 
@@ -72,6 +73,7 @@ public class Manager implements Runnable{
             queue.createBlockingQueue(this.productsNumber);
             queue.setController(controller);
         }
+        currentState.setSize(this.productsNumber);
 
         for (int i = 0; i < this.productsNumber; i++) {
             currentState.getProducts().add(new Product());
@@ -87,7 +89,8 @@ public class Manager implements Runnable{
     }
 
     public void play(int stateIndex) {
-        currentState = savedStates.get(stateIndex);
+       currentState = savedStates.get(stateIndex);
+       currentState.resetState();
         Thread thread = new Thread(this);
         thread.start();
     }
@@ -112,6 +115,5 @@ public class Manager implements Runnable{
                 e.printStackTrace();
             }
         }
-
     }
 }
