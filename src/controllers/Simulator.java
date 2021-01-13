@@ -8,10 +8,13 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import model.*;
 import java.awt.*;
+import java.io.File;
 import java.util.*;
 import java.net.URL;
 import java.util.List;
@@ -325,7 +328,9 @@ public class Simulator implements Initializable {
             updateCanvas();
 
         }
-        else throw new RuntimeException("invalid simulation");
+        else {
+            System.err.println("Simulation is not valid");
+        }
 
 
     }
@@ -363,10 +368,8 @@ public class Simulator implements Initializable {
 
 
     public void simulationFinished() {
-        stateChoiceBox.getItems().clear();
-        for (int i = 0; i < Manager.getInstance().getSavedStates().size(); i++) {
-            stateChoiceBox.getItems().add(i+1);
-        }
+        if (Manager.getInstance().getSavedStates().size() != stateChoiceBox.getItems().size())
+            stateChoiceBox.getItems().add(stateChoiceBox.getItems().size()+1);
         stateChoiceBox.setVisible(true);
         reSimulationButton.setVisible(true);
         newSimulationButton.setVisible(true);
@@ -380,6 +383,9 @@ public class Simulator implements Initializable {
         playButton.setVisible(true);
         productsNumText.setVisible(true);
         Manager.getInstance().newState();
+        source = Manager.getInstance().addQueue(new Point((int)canvas.getWidth()-20,(int)canvas.getHeight()/2-20));
+        endStack = Manager.getInstance().addQueue(new Point(20,(int)canvas.getHeight()/2 - 20));
+        updateCanvas();
     }
 
     public void replaySimulation() {
@@ -387,8 +393,9 @@ public class Simulator implements Initializable {
             stateChoiceBox.setVisible(false);
             reSimulationButton.setVisible(false);
             newSimulationButton.setVisible(false);
-            //Manager.getInstance().setCurrentState(stateChoiceBox.getSelectionModel().getSelectedItem()-1);
             Manager.getInstance().play(stateChoiceBox.getSelectionModel().getSelectedItem()-1);
+            source = Manager.getInstance().getCurrentState().getQueues().get(0);
+            endStack = Manager.getInstance().getCurrentState().getQueues().get(1);
         }
     }
 

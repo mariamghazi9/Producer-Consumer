@@ -84,13 +84,15 @@ public class Manager implements Runnable{
     }
 
     public void newState() {
-        currentState = null;
+        currentState = new State();
         productsNumber = null;
     }
 
     public void play(int stateIndex) {
-       currentState = savedStates.get(stateIndex);
-       currentState.resetState();
+        currentState.getQueues().get(1).getProductsQueue().clear();
+        productsNumber = currentState.getProducts().size();
+        currentState = savedStates.get(stateIndex);
+        currentState.resetState();
         Thread thread = new Thread(this);
         thread.start();
     }
