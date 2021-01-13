@@ -14,6 +14,7 @@ import model.*;
 import java.awt.*;
 import java.util.*;
 import java.net.URL;
+import java.util.List;
 
 
 public class Simulator implements Initializable {
@@ -315,12 +316,49 @@ public class Simulator implements Initializable {
             System.err.println("Moshkla fen el products number ?!!");
             return;
         }
-        canvas.setDisable(true);
-        playButton.setVisible(false);
-        productsNumText.setVisible(false);
-        productsNumText.setText("");
-        Manager.getInstance().startSimulation();
-        updateCanvas();
+        if(isValidSimulation()) {
+            canvas.setDisable(true);
+            playButton.setVisible(false);
+            productsNumText.setVisible(false);
+            productsNumText.setText("");
+            Manager.getInstance().startSimulation();
+            updateCanvas();
+
+        }
+        else throw new RuntimeException("invalid simulation");
+
+
+    }
+
+   public boolean isValidSimulation()
+   {
+       List<MyQueue> m=Manager.getInstance().getCurrentState().getQueues();
+       for (MyQueue q :m)
+       {
+           if(q!=endStack)
+               if(!isValidQueue(q)) return false;
+       }
+       return true;
+   }
+
+
+   public boolean isValidQueue(MyQueue queue)
+    {
+        if (queue ==endStack)
+            return true;
+        else if (queue.getMachines().isEmpty())
+            return false;
+        else
+        {
+            for (Machine m : queue.getMachines())
+            {
+                if(m.getConsumer()==null || !isValidQueue(m.getDestination()))
+                return false;
+
+            }
+            return true;
+        }
+
     }
 
 
@@ -349,8 +387,8 @@ public class Simulator implements Initializable {
             stateChoiceBox.setVisible(false);
             reSimulationButton.setVisible(false);
             newSimulationButton.setVisible(false);
+            //Manager.getInstance().setCurrentState(stateChoiceBox.getSelectionModel().getSelectedItem()-1);
             Manager.getInstance().play(stateChoiceBox.getSelectionModel().getSelectedItem()-1);
-            Manager.getInstance().startSimulation();
         }
     }
 
