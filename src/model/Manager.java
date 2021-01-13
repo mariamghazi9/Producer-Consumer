@@ -68,13 +68,13 @@ public class Manager {
         }
         this.currentState.setFirstQueue(currentState.getQueues().get(0));
         ArrayList<MyQueue> queues = currentState.getQueues();
-        for (MyQueue queue: queues) {
+        for (MyQueue queue : queues) {
             queue.createBlockingQueue(this.productsNumber);
             queue.setController(controller);
         }
 
         for (int i = 0; i < this.productsNumber; i++) {
-            currentState.getFirstQueue().consume(new Product());
+            currentState.getProducts().add(new Product());
         }
 
         this.savedStates.add(currentState);
@@ -88,6 +88,16 @@ public class Manager {
 
     public void play(int stateIndex) {
         currentState = savedStates.get(stateIndex);
+        ArrayList<Product> products = currentState.getProducts();
+        MyQueue firstQueue = currentState.getFirstQueue();
+        for (Product p : products) {
+            firstQueue.consume(p);
+            try {
+                Thread.sleep(p.getDelayTime());
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public State getCurrentState() {
