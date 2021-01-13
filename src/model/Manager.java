@@ -5,7 +5,7 @@ import controllers.Simulator;
 import java.awt.*;
 import java.util.ArrayList;
 
-public class Manager {
+public class Manager implements Runnable{
 
     private State currentState;
     private final ArrayList<State> savedStates = new ArrayList<>();
@@ -88,6 +88,20 @@ public class Manager {
 
     public void play(int stateIndex) {
         currentState = savedStates.get(stateIndex);
+        Thread thread = new Thread(this);
+        thread.start();
+    }
+
+    public State getCurrentState() {
+        return currentState;
+    }
+
+    public ArrayList<State> getSavedStates() {
+        return savedStates;
+    }
+
+    @Override
+    public void run() {
         ArrayList<Product> products = currentState.getProducts();
         MyQueue firstQueue = currentState.getFirstQueue();
         for (Product p : products) {
@@ -99,13 +113,5 @@ public class Manager {
             }
         }
 
-    }
-
-    public State getCurrentState() {
-        return currentState;
-    }
-
-    public ArrayList<State> getSavedStates() {
-        return savedStates;
     }
 }
