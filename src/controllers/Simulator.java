@@ -268,7 +268,7 @@ public class Simulator implements Initializable {
         canvas.getGraphicsContext2D().setStroke(Color.BLACK);
         canvas.getGraphicsContext2D().strokeRect(0,0, canvas.getWidth(), canvas.getHeight()-53);
         for (MyQueue queue : currentState.getQueues()) {
-            drawQueue(canvas.getGraphicsContext2D(), queue.getCoordinates().x, queue.getCoordinates().y, queue.productsCount() + "");
+            drawQueue(canvas.getGraphicsContext2D(), queue.getCoordinates().x, queue.getCoordinates().y, String.valueOf(queue.productsCount()));
             for (int i = 0; i < queue.getMachines().size(); i++) {
                 canvas.getGraphicsContext2D().strokeLine(queue.getCoordinates().getX() - 25, queue.getCoordinates().getY(), queue.getMachines().get(i).getCoordinates().getX() + 25, queue.getMachines().get(i).getCoordinates().getY());
                 canvas.getGraphicsContext2D().setFill(Color.BLACK);

@@ -10,8 +10,8 @@ public class Product {
     private final int delayTime;
 
     public Product() {
-        final int low = 2000;
-        final int high = 10000;
+        final int low = 1000;
+        final int high = 6000;
         Random rand = new Random();
         color = Color.rgb(rand.nextInt(255), rand.nextInt(255), rand.nextInt(255), 0.8);
         delayTime = rand.nextInt(high-low) + low;
