@@ -98,6 +98,7 @@ public class Manager {
                 e.printStackTrace();
             }
         }
+
     }
 
     public State getCurrentState() {
