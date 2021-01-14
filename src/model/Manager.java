@@ -90,8 +90,10 @@ public class Manager implements Runnable{
 
     public void play(int stateIndex) {
         currentState.getQueues().get(1).getProductsQueue().clear();
-        productsNumber = currentState.getProducts().size();
+
+
         currentState = savedStates.get(stateIndex);
+        productsNumber = currentState.getProducts().size();
         currentState.resetState();
         Thread thread = new Thread(this);
         thread.start();

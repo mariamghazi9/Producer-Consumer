@@ -188,14 +188,16 @@ public class Simulator implements Initializable {
                 updateCanvas();
             }
         }
+
+        // To prevent movement and deletion
+        if (currentlySelected==source || currentlySelected==endStack) {
+            currentlySelected = null;
+        }
+
         if (deleteElementFlag && currentlySelected!= null) {
             deleteSelectedObject(currentlySelected, currentState);
             currentlySelected = null;
             updateCanvas();
-        }
-        // To prevent movement and deletion
-        if (currentlySelected==source || currentlySelected==endStack) {
-            currentlySelected = null;
         }
     }
 
@@ -293,7 +295,9 @@ public class Simulator implements Initializable {
                 drawProduct(canvas.getGraphicsContext2D(), index, temp);
                 index++;
             }
-            if (index == Manager.getInstance().getProductsNumber()) { simulationFinished();}
+            if (index == Manager.getInstance().getProductsNumber()) {
+                simulationFinished();
+            }
         }
     }
 
@@ -316,7 +320,7 @@ public class Simulator implements Initializable {
             int productsNumber = Integer.parseInt(productsNumText.getText());
             Manager.getInstance().setProductsNumber(productsNumber);
         } catch (Exception e) {
-            System.err.println("Moshkla fen el products number ?!!");
+            //System.err.println("Moshkla fen el products number ?!!");
             return;
         }
         if(isValidSimulation()) {
@@ -329,7 +333,7 @@ public class Simulator implements Initializable {
 
         }
         else {
-            System.err.println("Simulation is not valid");
+            //System.err.println("Simulation is not valid");
         }
 
 
