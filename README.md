@@ -1,7 +1,7 @@
 # Producer-Consumer Simulation
 ### The program designed by CSED, Faculty of Engineering, Alexandria University students.
 ## Description 
-Object-Oriented program developed in Java which simulates a production line using producer-consumer design pattern, GUI is developed using JAVA FX
+Object-Oriented program developed in Java which simulates a production line using producer-consumer design pattern to target a critical synchronization issue where we need to achieve cooperation between different machines with no data loss, GUI is developed using JAVA FX
 
 ## UML![](https://lh6.googleusercontent.com/hm--pwzFy-pYWoV1GmJ5jkDNdKtmWLXHg3H5hp_dX5acLrsfT-KsWo-Hgh75s_P8vozcgZUP1mVuoSpipmdax-xSvfOXK3osFB1gMHCneSKXpD72mzU1lFxoR5I4bdWA6nWh191s)
 
